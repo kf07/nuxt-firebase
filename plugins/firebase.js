@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from 'firebase'
 
 // .env に設定した値を取得してる
 const config = {

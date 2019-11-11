@@ -25,10 +25,16 @@
 
 <script>
 import Logo from '~/components/Logo.vue'
+import firebase from '~/plugins/firebase'
+const wCR = firebase.firestore().collection('memo')
+console.log(wCR)
 
 export default {
   components: {
     Logo
+  },
+  mounted() {
+    console.log(firebase.projectId)
   }
 }
 </script>
