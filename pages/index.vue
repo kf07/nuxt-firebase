@@ -1,40 +1,59 @@
 <template>
   <section class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        nuxt-firebase
-      </h1>
-      <h2 class="subtitle">
-        My tiptop Nuxt.js project
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green"
-          >Documentation</a
-        >
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-          >GitHub</a
-        >
-      </div>
-    </div>
+    <input v-model="text" type="text" />
+    <button @click="handleClick">追加</button>
+    <ul>
+      <li v-for="(item, index) in chats" :key="index">
+        <p>{{ item.from }}</p>
+        <p>{{ item.msg }}</p>
+      </li>
+    </ul>
   </section>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
 import firebase from '~/plugins/firebase'
-const wCR = firebase.firestore().collection('memo')
-console.log(wCR)
-
+const db = firebase.firestore()
 export default {
-  components: {
-    Logo
+  data() {
+    return {
+      memo: [],
+      text: [],
+      chats: []
+    }
   },
   mounted() {
-    console.log(firebase.projectId)
+    const test = db
+      .collection('rooms')
+      .doc('roomA')
+      .collection('message')
+
+    // test.onSnapshot(function(doc) {
+    //   console.log('Current data:', doc.data())
+    // })
+    test.onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === 'added') {
+          this.chats.push(change.doc.data())
+        }
+        // 更新
+        else if (change.type === 'modified') {
+        }
+      })
+    })
+  },
+  methods: {
+    handleClick() {
+      // db.collection('memo')
+      //   .doc('memo1')
+      //   .onSnapshot(function(doc) {
+      //     console.log('correnct data:', doc.data())
+      //   })
+      db.collection('memo').add({
+        id: 1,
+        title: this.text
+      })
+    }
   }
 }
 </script>
