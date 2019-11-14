@@ -38,7 +38,7 @@ export default {
     // test.onSnapshot(function(doc) {
     //   console.log('Current data:', doc.data())
     // })
-    test.onSnapshot(snapshot => {
+    test.orderBy('createdAt').onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         if (change.type === 'added') {
           this.chats.push(change.doc.data())
@@ -94,6 +94,7 @@ li {
   padding: 3px;
   .name {
     margin-right: 20px;
+    width: 20%;
   }
 }
 </style>
