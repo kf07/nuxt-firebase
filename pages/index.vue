@@ -1,33 +1,40 @@
 <template>
   <section class="container">
-    <input v-model="text" type="text" />
-    <button @click="handleClick">追加</button>
-    <ul>
-      <li v-for="(item, index) in chats" :key="index">
-        <p>{{ item.from }}</p>
-        <p>{{ item.msg }}</p>
-      </li>
-    </ul>
+    <div>
+      <ul class="chat-list">
+        <li v-for="(item, index) in chats" :key="index" class="chat-block">
+          <p class="name">{{ item.from }}</p>
+          <p class="message">{{ item.msg }}</p>
+        </li>
+      </ul>
+      <div>
+        <label>name：<input v-model="name" type="text"/></label>
+        <label>message：<input v-model="text" type="text"/></label>
+        <button @click="handleClick">送信</button>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
 import firebase from '~/plugins/firebase'
 const db = firebase.firestore()
+
+const test = db
+  .collection('rooms')
+  .doc('roomA')
+  .collection('message')
+
 export default {
   data() {
     return {
       memo: [],
       text: [],
-      chats: []
+      chats: [],
+      name: ''
     }
   },
   mounted() {
-    const test = db
-      .collection('rooms')
-      .doc('roomA')
-      .collection('message')
-
     // test.onSnapshot(function(doc) {
     //   console.log('Current data:', doc.data())
     // })
@@ -49,44 +56,44 @@ export default {
       //   .onSnapshot(function(doc) {
       //     console.log('correnct data:', doc.data())
       //   })
-      db.collection('memo').add({
-        id: 1,
-        title: this.text
+      test.add({
+        from: this.name,
+        msg: this.text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
+      this.text = ''
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss">
 .container {
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
 }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+ul,
+li {
+  list-style: none;
+  padding: 0;
 }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+li {
+  display: flex;
 }
 
-.links {
-  padding-top: 15px;
+.chat-list {
+  margin-bottom: 20px;
+}
+
+.chat-block {
+  padding: 3px;
+  .name {
+    margin-right: 20px;
+  }
 }
 </style>
