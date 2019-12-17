@@ -1,10 +1,11 @@
 <template>
   <section class="container">
-    <div>
+    <div class="chat">
       <ul class="chat-list">
         <li v-for="(item, index) in chats" :key="index" class="chat-block">
           <p class="name">{{ item.from }}</p>
           <p class="message">{{ item.msg }}</p>
+          <p class="date">{{ item.createdAt | timeFormat }}</p>
         </li>
       </ul>
       <div>
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import firebase from '~/plugins/firebase'
 const db = firebase.firestore()
 
@@ -26,6 +28,14 @@ const test = db
   .collection('message')
 
 export default {
+  filters: {
+    timeFormat: function(value) {
+      if (value !== undefined) {
+        const timestamp = value.seconds * 1000
+        return dayjs(timestamp).format('MM/DD HH:mm:ss')
+      }
+    }
+  },
   data() {
     return {
       memo: [],
@@ -86,6 +96,10 @@ li {
   display: flex;
 }
 
+.chat {
+  width: 900px;
+}
+
 .chat-list {
   margin-bottom: 20px;
 }
@@ -95,6 +109,10 @@ li {
   .name {
     margin-right: 20px;
     width: 20%;
+  }
+  .message {
+    margin-right: 20px;
+    width: 40%;
   }
 }
 </style>
